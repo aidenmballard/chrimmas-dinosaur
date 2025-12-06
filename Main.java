@@ -1,5 +1,3 @@
-package Games.GameStarter;
-
 import javax.swing.JFrame;
 
 public class Main {
