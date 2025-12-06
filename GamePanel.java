@@ -1,3 +1,4 @@
+// Import statements
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -17,6 +18,12 @@ public class GamePanel extends JPanel implements Runnable {
 	public int screenHeight = maxScreenRow * tileSize;
 
 	int FPS = 60;
+
+	public int xPos = 30;
+	public int yPos = 50;
+	
+	public int xVelocity = 10;
+	public int yVelocity = 10;
 
 	Thread gameThread;
 
@@ -64,7 +71,11 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	public void update() {
-		
+		xPos += xVelocity;
+		yPos += yVelocity;
+
+		if (xPos >= screenWidth || xPos <= 0) xVelocity *= -1;
+		if (yPos >= screenHeight || yPos <= 0) yVelocity *= -1;
 	}
 
 	public void paintComponent(Graphics g) {
@@ -72,7 +83,7 @@ public class GamePanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D) g;
 		
 		g2.setColor(Color.BLACK);
-		g2.fillRect(100, 100, 40, 40);
+		g2.fillRect(xPos, yPos, 40, 40);
 		
 		g2.dispose();
 	}
