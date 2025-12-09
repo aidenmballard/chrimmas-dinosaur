@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 
 import javax.swing.JPanel;
 
@@ -29,7 +28,10 @@ public class GamePanel extends JPanel implements Runnable {
 	public double yVelocity = 10;
 
 	public int triangleX = 400;
-	public int triangleXOffset = 8;
+	public int triangleXOffset = 6;
+
+	public int birdX = 800;
+	public int birdXOffset = 6;
 
 	Thread gameThread;
 
@@ -85,14 +87,19 @@ public class GamePanel extends JPanel implements Runnable {
 			yVelocity += 0.4;
 
 		triangleX -= triangleXOffset;
+		birdX -= birdXOffset;
 		System.out.println(triangleX);
 		System.out.println(xPos);
-		if (triangleX > xPos && triangleX - ((int) xPos + 160) <= 10 && yVelocity == 0) {
+		if ((triangleX > xPos && triangleX - ((int) xPos + 160) <= 10 && yVelocity == 0)
+				|| (birdX > xPos && birdX - ((int) xPos + 160) <= 10 && yVelocity == 0))
 			yVelocity += -10;
+
+		if (triangleX < -30) {
+			triangleX = screenWidth + (int) (Math.random() * 400 + 70);
+			if (birdX < -40 && Math.random() < 0.2)
+				birdX = triangleX + 300;
 		}
 
-		if (triangleX < -30)
-			triangleX = screenWidth + (int) (Math.random() * 400 + 70);
 	}
 
 	public void paintComponent(Graphics g) {
@@ -106,6 +113,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 		g2.fillPolygon(new int[] { triangleX - 30, triangleX, triangleX + 30 },
 				new int[] { screenHeight - 80, screenHeight - 140, screenHeight - 80 }, 3);
+		g2.fillOval(birdX, screenHeight - 160, 40, 30);
 
 		g2.dispose();
 	}
