@@ -1,8 +1,11 @@
+
 // Import statements
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 
 import javax.swing.JPanel;
 
@@ -19,11 +22,14 @@ public class GamePanel extends JPanel implements Runnable {
 
 	int FPS = 60;
 
-	public int xPos = 30;
-	public int yPos = 50;
-	
-	public int xVelocity = 10;
-	public int yVelocity = 10;
+	public double xPos = 30;
+	public double yPos = 50;
+
+	public double xVelocity = 10;
+	public double yVelocity = 10;
+
+	public int triangleX = 400;
+	public int triangleXOffset = 8;
 
 	Thread gameThread;
 
@@ -71,20 +77,36 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	public void update() {
-		xPos += xVelocity;
 		yPos += yVelocity;
+		if (yPos + 40 >= screenHeight - 80) {
+			yPos = screenHeight - 120;
+			yVelocity = 0;
+		} else if (yVelocity < 8)
+			yVelocity += 0.4;
 
-		if (xPos >= screenWidth || xPos <= 0) xVelocity *= -1;
-		if (yPos >= screenHeight || yPos <= 0) yVelocity *= -1;
+		triangleX -= triangleXOffset;
+		System.out.println(triangleX);
+		System.out.println(xPos);
+		if (triangleX > xPos && triangleX - ((int) xPos + 160) <= 10 && yVelocity == 0) {
+			yVelocity += -10;
+		}
+
+		if (triangleX < -30)
+			triangleX = screenWidth + (int) (Math.random() * 400 + 70);
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		
+
 		g2.setColor(Color.BLACK);
-		g2.fillRect(xPos, yPos, 40, 40);
-		
+		g2.setStroke(new BasicStroke(10));
+		g2.drawRect(-10, screenHeight - 80, screenWidth + 40, 90);
+		g2.fillRect((int) xPos, (int) yPos, 40, 40);
+
+		g2.fillPolygon(new int[] { triangleX - 30, triangleX, triangleX + 30 },
+				new int[] { screenHeight - 80, screenHeight - 140, screenHeight - 80 }, 3);
+
 		g2.dispose();
 	}
 }
