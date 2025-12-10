@@ -6,8 +6,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
+import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable {
 	int originalTileSize = 16;
@@ -42,17 +46,27 @@ public class GamePanel extends JPanel implements Runnable {
 	int row = 14;
 	int count = 1;
 
+	BufferedImage dinoLeft = null;
+	BufferedImage tree = null;
+	BufferedImage sleigh = null;
+
 	Thread gameThread;
 
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-		this.setBackground(Color.WHITE);
+		this.setBackground(new Color(233, 233, 255));
 		this.setDoubleBuffered(true);
 		this.setFocusable(true);
 
 		for (int i = 0; i < 15; i++)
 			for (int j = 0; j < 15; j++)
 				snowflakeOffsets[i][j] = (int) (Math.random() * 40);
+
+		try {
+			dinoLeft = ImageIO.read(getClass().getResourceAsStream("/Images/BeardDino.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void startGameThread() {
@@ -93,8 +107,8 @@ public class GamePanel extends JPanel implements Runnable {
 
 	public void update() {
 		yPos += yVelocity;
-		if (yPos + 40 >= screenHeight - 80) {
-			yPos = screenHeight - 120;
+		if (yPos + 80 >= screenHeight - 80) {
+			yPos = screenHeight - 160;
 			yVelocity = 0;
 		} else if (yVelocity < 8)
 			yVelocity += 0.4;
@@ -135,15 +149,15 @@ public class GamePanel extends JPanel implements Runnable {
 
 		// Draws the ground
 		g2.setColor(Color.BLACK);
-		g2.setStroke(new BasicStroke(10));
+		g2.setStroke(new BasicStroke(4));
 		g2.drawRect(-10, screenHeight - 80, screenWidth + 40, 90);
 		g2.setColor(Color.WHITE);
-		g2.fillRect(-10, screenHeight - 75, screenWidth + 40, 90);
+		g2.fillRect(-10, screenHeight - 79, screenWidth + 40, 90);
 
 		// Draws the player
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(10));
-		g2.fillRect((int) xPos, (int) yPos, 40, 40);
+		g2.drawImage(dinoLeft, (int) xPos, (int) yPos, 80, 80, this);
 
 		// Draws the trees and birds
 		g2.fillPolygon(new int[] { triangleX - 30, triangleX, triangleX + 30 },
