@@ -186,13 +186,14 @@ public class GamePanel extends JPanel implements Runnable {
 		g2.drawString("      /'.''.'.\\", triangleX, screenHeight - 100);
 		g2.drawString("        [_]", triangleX, screenHeight - 85);
 
-		g2.setFont(new Font("Arial", Font.BOLD, 15));
+		g2.setFont(new Font("Arial", Font.BOLD, 11));
 		String[] asciiArt = {
-				"  __",
-				" {/    ",
-				" *=___",
-				"   <||",
-				"     ''"
+				"  {  }",
+				"   }{",
+				" .-'\\",
+				"  \"'\\\"\"\"\"\"\"'),",
+				"      )/----,)",
+				"      / \\   / | "
 		};
 		int y = screenHeight - 180;
 		for (String line : asciiArt) {
