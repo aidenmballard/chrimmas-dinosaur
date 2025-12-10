@@ -43,12 +43,12 @@ public class GamePanel extends JPanel implements Runnable {
 	double snowflakeY = 40;
 
 	int[][] snowflakeOffsets = new int[15][15];
-	int row = 14;
-	int count = 1;
 
 	BufferedImage dinoLeft = null;
-	BufferedImage tree = null;
-	BufferedImage sleigh = null;
+	BufferedImage dinoRight = null;
+	BufferedImage dinoUp = null;
+	BufferedImage currentDino = null;
+	int count = 0;
 
 	Thread gameThread;
 
@@ -63,10 +63,13 @@ public class GamePanel extends JPanel implements Runnable {
 				snowflakeOffsets[i][j] = (int) (Math.random() * 40);
 
 		try {
-			dinoLeft = ImageIO.read(getClass().getResourceAsStream("/Images/BeardDino.png"));
+			dinoLeft = ImageIO.read(getClass().getResourceAsStream("/Images/BeardDinoL.png"));
+			dinoRight = ImageIO.read(getClass().getResourceAsStream("/Images/BeardDinoR.png"));
+			dinoUp = ImageIO.read(getClass().getResourceAsStream("/Images/BeardDino.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		currentDino = dinoLeft;
 	}
 
 	public void startGameThread() {
@@ -106,6 +109,19 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	public void update() {
+		count++;
+		if (yVelocity != 0)
+			currentDino = dinoUp;
+		else {
+			if (count % 15 == 0) {
+				if (currentDino == dinoLeft)
+					currentDino = dinoRight;
+				else
+					currentDino = dinoLeft;
+				count = 0;
+			}
+		}
+
 		yPos += yVelocity;
 		if (yPos + 80 >= screenHeight - 80) {
 			yPos = screenHeight - 160;
@@ -115,13 +131,13 @@ public class GamePanel extends JPanel implements Runnable {
 
 		triangleX -= triangleXOffset;
 		birdX -= birdXOffset;
-		if ((triangleX > xPos && triangleX - ((int) xPos + 160) <= 10 && yVelocity == 0)
-				|| (birdX > xPos && birdX - ((int) xPos + 160) <= 10 && yVelocity == 0))
-			yVelocity += -10;
+		if ((triangleX > xPos && triangleX - ((int) xPos + 150) <= 10 && yVelocity == 0)
+				|| (birdX > xPos && birdX - ((int) xPos + 150) <= 10 && yVelocity == 0))
+			yVelocity += -11;
 
-		if (triangleX < -30) {
+		if (triangleX < -90) {
 			triangleX = screenWidth + (int) (Math.random() * 400 + 70);
-			if (birdX < -40 && Math.random() < 0.2)
+			if (birdX < -40 && Math.random() < 0.4)
 				birdX = triangleX + 380;
 		}
 	}
@@ -157,12 +173,32 @@ public class GamePanel extends JPanel implements Runnable {
 		// Draws the player
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(10));
-		g2.drawImage(dinoLeft, (int) xPos, (int) yPos, 80, 80, this);
+		g2.drawImage(currentDino, (int) xPos, (int) yPos, 80, 80, this);
 
-		// Draws the trees and birds
-		g2.fillPolygon(new int[] { triangleX - 30, triangleX, triangleX + 30 },
-				new int[] { screenHeight - 80, screenHeight - 140, screenHeight - 80 }, 3);
-		g2.fillOval(birdX, screenHeight - 160, 40, 30);
+		g2.setFont(new Font("Arial", Font.BOLD, 17));
+		g2.setColor(Color.BLACK);
+		g2.drawString("          *", triangleX, screenHeight - 190);
+		g2.drawString("         /.\\", triangleX, screenHeight - 175);
+		g2.drawString("        /..'\\", triangleX, screenHeight - 160);
+		g2.drawString("        /'.'\\", triangleX, screenHeight - 145);
+		g2.drawString("       /.''.'\\", triangleX, screenHeight - 130);
+		g2.drawString("       /.'.'.\\", triangleX, screenHeight - 115);
+		g2.drawString("      /'.''.'.\\", triangleX, screenHeight - 100);
+		g2.drawString("        [_]", triangleX, screenHeight - 85);
+
+		g2.setFont(new Font("Arial", Font.BOLD, 15));
+		String[] asciiArt = {
+				"  __",
+				" {/    ",
+				" *=___",
+				"   <||",
+				"     ''"
+		};
+		int y = screenHeight - 180;
+		for (String line : asciiArt) {
+			g2.drawString(line, birdX, y);
+			y += 13;
+		}
 
 		g2.dispose();
 	}
